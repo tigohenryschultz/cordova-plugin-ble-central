@@ -5,9 +5,9 @@ const fs = require('fs');
 const path = require('path');
 
 const permissions = [
-    'ACCESS_COARSE_LOCATION',
-    'ACCESS_FINE_LOCATION',
-    'ACCESS_BACKGROUND_LOCATION',
+    // 'ACCESS_COARSE_LOCATION',
+    // 'ACCESS_FINE_LOCATION',
+    // 'ACCESS_BACKGROUND_LOCATION',
     'BLUETOOTH',
     'BLUETOOTH_ADMIN',
     'BLUETOOTH_SCAN',
@@ -45,8 +45,8 @@ module.exports = function (context) {
 
 function usesPermissionsRegex(permission) {
     return new RegExp(
-        '\\n\\s*?<uses-permission.*? android:name="android\\.permission\\.' + permission + '".*?\\/>',
-        'gm'
+      '\\n\\s*?<uses-permission.*? android:name="android\\.permission\\.' + permission + '".*?\\/>',
+      'gm'
     );
 }
 

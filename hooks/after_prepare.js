@@ -26,8 +26,8 @@ module.exports = function (context) {
     let androidManifest = fs.readFileSync(manifestPath).toString();
     if (accessBackgroundLocation == 'true' && androidManifest.indexOf('ACCESS_BACKGROUND_LOCATION') == -1) {
         androidManifest = insertPermission(
-            androidManifest,
-            ' android:maxSdkVersion="30" android:name="android.permission.ACCESS_BACKGROUND_LOCATION"'
+          androidManifest,
+          ' android:maxSdkVersion="30" android:name="android.permission.ACCESS_BACKGROUND_LOCATION"'
         );
         manifestChanged = true;
     }
@@ -45,6 +45,14 @@ module.exports = function (context) {
         androidManifest = stripPermission(androidManifest, 'ACCESS_FINE_LOCATION');
         androidManifest = stripPermission(androidManifest, 'ACCESS_BACKGROUND_LOCATION');
         androidManifest = stripMaxSdkVersion(androidManifest, '28');
+        manifestChanged = true;
+    }
+
+    if (targetSdkVersion >= 31) {
+        // Strip out Android 12+ changes
+        androidManifest = stripPermission(androidManifest, 'ACCESS_FINE_LOCATION');
+        androidManifest = stripPermission(androidManifest, 'ACCESS_COARSE_LOCATION');
+        androidManifest = stripPermission(androidManifest, 'ACCESS_BACKGROUND_LOCATION');
         manifestChanged = true;
     }
 
@@ -83,10 +91,10 @@ function getTargetSdkVersion(platformPath) {
     } else if (fs.existsSync(gradleConfigProperties)) {
         const gradleConfig = fs.readFileSync(gradleConfigProperties).toString();
         sdkVersion = gradleConfig
-            .split('\n')
-            .map((l) => l.split('='))
-            .filter(([key]) => key == 'cdvTargetSdkVersion')
-            .map(([_, value]) => value);
+          .split('\n')
+          .map((l) => l.split('='))
+          .filter(([key]) => key == 'cdvTargetSdkVersion')
+          .map(([_, value]) => value);
     }
 
     return Number(sdkVersion || 0);
@@ -97,16 +105,16 @@ function insertPermission(androidManifest, text) {
     const template = permissionMatcher.exec(androidManifest);
     const toInsert = template + text + ' />\n';
     return (
-        androidManifest.substring(0, template.index + 1) +
-        toInsert +
-        androidManifest.substring(template.index, androidManifest.length)
+      androidManifest.substring(0, template.index + 1) +
+      toInsert +
+      androidManifest.substring(template.index, androidManifest.length)
     );
 }
 
 function stripPermission(androidManifest, permission) {
     const replacer = new RegExp(
-        '\\n\\s*?<uses-permission.*? android:name="android\\.permission\\.' + permission + '".*?\\/>\\n',
-        'gm'
+      '\\n\\s*?<uses-permission.*? android:name="android\\.permission\\.' + permission + '".*?\\/>\\n',
+      'gm'
     );
     return androidManifest.replace(replacer, '\n');
 }

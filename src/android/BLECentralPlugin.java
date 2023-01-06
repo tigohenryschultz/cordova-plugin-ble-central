@@ -1116,9 +1116,7 @@ public class BLECentralPlugin extends CordovaPlugin {
                 missingPermissions.add(ACCESS_BACKGROUND_LOCATION);
             }
         } else {
-            if(!PermissionHelper.hasPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                missingPermissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
-            }
+
         }
 
         if (missingPermissions.size() > 0) {
